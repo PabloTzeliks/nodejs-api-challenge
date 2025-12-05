@@ -1,5 +1,15 @@
+
 POST http://localhost:3333/courses
+Content-Type: application/json
+
+{
+    "title": "Node.js Basics"
+}
 
 ###
 
 GET http://localhost:3333/courses
+
+###
+
+GET http://localhost:3333/courses/1

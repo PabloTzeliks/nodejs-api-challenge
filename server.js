@@ -15,11 +15,31 @@ server.get('/courses', () => {
 
 server.post('/courses', (request, reply) => {
 
+    const courseTitle = request.body.title;
     const courseId = crypto.randomUUID();
 
-    courses.push({ id: courseId, name: 'New Course' });
+    if (!courseTitle) {
+        return reply.status(400).send({ message: 'Title is required' });
+    }
 
-    return reply.status(201).send({ courseId });
+    const newCourse = { id: courseId, name: courseTitle };
+
+    courses.push(newCourse);
+
+    return reply.status(201).send({ newCourse });
+})
+
+server.get('/courses/:id', (request, reply) => {
+
+    const courseId = request.params.id;
+
+    const course = courses.find(course => course.id === courseId);
+    
+    if (course) {
+        return { course };
+    }
+
+    return reply.status(404).send({ message: 'Course not found.' });
 })
 
 server.listen({ port: 3333 }).then(() => {
