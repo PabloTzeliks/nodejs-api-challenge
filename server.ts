@@ -2,7 +2,7 @@ import fastify from 'fastify'
 import crypto from 'node:crypto'
 import { eq } from 'drizzle-orm'
 import { db } from './src/database/client.ts'
-import { users } from './src/database/schema.ts'
+// import { users } from './src/database/schema.ts'
 import { courses } from './src/database/schema.ts'
 
 const server = fastify({
@@ -18,11 +18,7 @@ const server = fastify({
     },
 })
 
-// const arrayCourses = [
-//     { id: '1', name: 'Introduction to Programming' },
-//     { id: '2', name: 'Advanced JavaScript' },
-//     { id: '3', name: 'Database Design' }
-// ];
+// V0.1.0
 
 server.get('/courses', async (request, reply) => {
 
