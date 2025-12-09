@@ -1,5 +1,6 @@
 import fastify from 'fastify'
 import crypto from 'node:crypto'
+import { eq } from 'drizzle-orm'
 import { db } from './src/database/client.ts'
 import { users } from './src/database/schema.ts'
 import { courses } from './src/database/schema.ts'
@@ -25,7 +26,10 @@ const server = fastify({
 
 server.get('/courses', async (request, reply) => {
 
-    const result = await db.select().from(courses)
+    const result = await db.select({
+        id: courses.id,
+        title: courses.title
+    }).from(courses)
 
     return reply.send({ courses: result });
 })
@@ -46,18 +50,27 @@ server.get('/courses', async (request, reply) => {
 //     return reply.status(201).send({ newCourse });
 // })
 
-// server.get('/courses/:id', (request, reply) => {
+server.get('/courses/:id', async (request, reply) => {
 
-//     const courseId = request.params.id;
+    type Params = {
 
-//     const course = courses.find(course => course.id === courseId);
+        id: string
+    }
+
+    const params = request.params as Params
+    const courseId = params.id;
+
+    const result = await db
+        .select()
+        .from(courses)
+        .where(eq(courses.id, courseId))
     
-//     if (course) {
-//         return { course };
-//     }
+    if (result.length > 0) {
+        return { course: result[0] };
+    }
 
-//     return reply.status(404).send({ message: 'Course not found.' });
-// })
+    return reply.status(404).send({ message: 'Course not found.' });
+})
 
 server.listen({ port: 3333 }).then(() => {
 
