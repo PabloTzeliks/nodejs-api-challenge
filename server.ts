@@ -34,22 +34,6 @@ server.get('/courses', async (request, reply) => {
     return reply.send({ courses: result });
 })
 
-// server.post('/courses', (request, reply) => {
-
-//     const courseTitle = request.body.title;
-//     const courseId = crypto.randomUUID();
-
-//     if (!courseTitle) {
-//         return reply.status(400).send({ message: 'Title is required' });
-//     }
-
-//     const newCourse = { id: courseId, name: courseTitle };
-
-//     courses.push(newCourse);
-
-//     return reply.status(201).send({ newCourse });
-// })
-
 server.get('/courses/:id', async (request, reply) => {
 
     type Params = {
@@ -70,6 +54,32 @@ server.get('/courses/:id', async (request, reply) => {
     }
 
     return reply.status(404).send({ message: 'Course not found.' });
+})
+
+server.post('/courses', async (request, reply) => {
+
+    type Body = {
+
+        title: string,
+        description: string
+    }
+
+    const body = request.body as Body
+    const courseTitle = body.title
+    const courseDescription = body.description
+
+    const courseId = crypto.randomUUID()
+
+    if (!courseTitle) {
+        return reply.status(400).send({ message: 'Title is required' });
+    }
+
+    const result = await db
+        .insert(courses)
+        .values({ title: courseTitle, description: courseDescription })
+        .returning()
+
+    return reply.status(201).send({ courseId: result[0].id });
 })
 
 server.listen({ port: 3333 }).then(() => {
