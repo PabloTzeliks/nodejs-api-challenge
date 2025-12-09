@@ -1,6 +1,7 @@
-const fastify = require('fastify');
+import fastify from 'fastify'
+import crypto from 'node:crypto'
 
-const server = fastify();
+const server = fastify()
 
 const courses = [
     { id: '1', name: 'Introduction to Programming' },
